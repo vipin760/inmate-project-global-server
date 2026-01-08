@@ -1,10 +1,6 @@
-
 import { request } from "http";
-import parentsubscriptionModel from "../models/inmateSubscription.model.js";
 import { createOrder } from "../services/razorpay.service.js";
-import getExpiryDate from "../utils/getExpirydate.js";
 import crypto from 'crypto'
-import parentsubscriptionHistoryModel from "../models/inmatesubscriptionHistory.model.js";
 import { Location } from "../models/location.model.js";
 import inmateSubscriptionModel from "../models/inmateSubscription.model.js";
 import inmatesubscriptionHistoryModel from "../models/inmatesubscriptionHistory.model.js";
@@ -14,7 +10,6 @@ export default async function paymentFunction(fastify) {
     fastify.post('/create', async (request, reply) => {
         try {
             const { amount, shortReceipt, inmateData, locationId, subscription_type, inmate_info,month } = request.body;
-            console.log("<><>req.body",request.body)
 
             const inmateId = inmateData._id;
             const today = new Date();
