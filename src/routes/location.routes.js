@@ -63,7 +63,10 @@ export default async function locationRoutes(fastify) {
     // Add location
     fastify.post("/", async (req, reply) => {
         try {
-            const { name, location, amount } = req.body;
+            const { name, location, baseUrl } = req.body;
+            if(!name) return reply.code(400).send({status:false,message:"name field required"})
+            if(!location) return reply.code(400).send({status:false,message:"location field required"})
+            if(!baseUrl) return reply.code(400).send({status:false,message:"baseUrl field required"})
 
             const existingLocation = await Location.findOne({
                 name: { $regex: name, $options: "i" },
@@ -72,21 +75,20 @@ export default async function locationRoutes(fastify) {
             if (existingLocation) {
                 return reply.code(400).send({
                     status: false,
-                    message: `School '${name}' already exists`
+                    message: `Inmate '${name}' already exists`
                 });
             }
             const newLocation = new Location(req.body);
-            await newLocation.save();
-            reply.code(201).send(newLocation);
+            const saveLocation = await newLocation.save();
+            reply.code(201).send(saveLocation);
         } catch (error) {
-            return reply(400).send({ statud: false, message: `Something went wrong (${error.message})` })
+            return reply(400).send({ status: false, message: `Something went wrong (${error.message})` })
         }
     });
 
     // Update location
     fastify.put("/:id", async (req, reply) => {
         try {
-            console.log("<><>working",req.body)
         const existingLocation = await Location.findOne({
             _id: { $ne: req.params.id },
             name: { $regex: req.body.name, $options: "i" },

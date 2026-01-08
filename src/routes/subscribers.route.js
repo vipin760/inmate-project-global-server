@@ -1,4 +1,4 @@
-import parentsubscriptionModel from "../models/parentsubscription.model.js";
+import parentsubscriptionModel from "../models/inmateSubscription.model.js";
 import { Location } from "../models/location.model.js";
 import authenticateToken from "../middleware/auth.middleware.js";
 import mongoose from "mongoose";
