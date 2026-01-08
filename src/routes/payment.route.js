@@ -33,7 +33,7 @@ export default async function paymentFunction(fastify) {
             }
 
             // 1️⃣ Check if valid active subscription exists
-            const activeSub = await parentsubscriptionModel.findOne({
+            const activeSub = await inmateSubscriptionModel.findOne({
                 inmateId: inmateId,
                 payment_status: "SUCCESS",
                 is_active: true,
