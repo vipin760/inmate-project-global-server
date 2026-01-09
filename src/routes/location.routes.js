@@ -64,6 +64,9 @@ export default async function locationRoutes(fastify) {
     fastify.post("/", async (req, reply) => {
         try {
             const { name, location, baseUrl } = req.body;
+            if(!req.body.subscription_amount){
+                req.body.subscription_amount = 300
+            }
             if(!name) return reply.code(400).send({status:false,message:"name field required"})
             if(!location) return reply.code(400).send({status:false,message:"location field required"})
             if(!baseUrl) return reply.code(400).send({status:false,message:"baseUrl field required"})
