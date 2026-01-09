@@ -29,7 +29,8 @@ export default async function paymentFunction(fastify) {
                 crimeType: inmate_info.crimeType,
                 status: inmate_info.status,
                 is_blocked: inmate_info.is_blocked,
-                location_id: inmate_info.location_id
+                location_id: inmate_info.location_id,
+                phonenumber:inmate_info.phonenumber
             }
 
             // 1️⃣ Check if valid active subscription exists

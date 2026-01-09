@@ -78,6 +78,7 @@ export default async function locationRoutes(fastify) {
                     message: `Inmate '${name}' already exists`
                 });
             }
+            let locationdata = {}
             const newLocation = new Location(req.body);
             const saveLocation = await newLocation.save();
             reply.code(201).send(saveLocation);
@@ -115,6 +116,6 @@ export default async function locationRoutes(fastify) {
     // Delete location
     fastify.get("/:id", async (req, reply) => {
         const locationData = await Location.findById(req.params.id);
-        reply.code(200).send({ status: true, data: locationData, message: "Location deleted successfully" });
+        reply.code(200).send({ status: true, data: locationData, message: "Location fetch successfully" });
     });
 }

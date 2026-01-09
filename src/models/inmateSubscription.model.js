@@ -20,7 +20,8 @@ const InmateSnapshotSchema = new mongoose.Schema(
     contact_number: String,
     gender: String,
     nationality: String,
-    blood_group: String
+    blood_group: String,
+    phonenumber:String,
   },
   { _id: false }
 );
