@@ -1,5 +1,20 @@
+import usermodel from "../models/auth.model.js"
+
 export default async function indexRoutes(fastify) {
- fastify.get("/",(req,res)=>{
+ fastify.get("/",async(req,res)=>{
+  const user = {
+   username:"Super Admin",
+   fullname:"Super Admin",
+   password:"superAdmin@123",
+   role:"SUPER ADMIN"
+  }
+  const userExist = await usermodel.findOne({username:user.username})
+  if(userExist){
+    res.status(200).send({status:true,message:"server running successfully (user exist)"})
+  }
+  await usermodel.create(user).then(data=>{
+   return res.status(200).send({status:true,message:"server running successfully (user created)"});
+  })
    res.status(200).send({status:true,message:"server running successfully"})
  })
 }
