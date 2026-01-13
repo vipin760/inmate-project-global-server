@@ -228,8 +228,6 @@ export default async function subscriberFunction(fastify) {
         }
     });
 
-
-
     fastify.get(
         "/location/:locationId",
         { preHandler: authenticateToken },
@@ -307,7 +305,6 @@ export default async function subscriberFunction(fastify) {
             }
         }
     );
-
 
     // ============================================================
     // 3️⃣ SUBSCRIPTION HISTORY BY STUDENT
