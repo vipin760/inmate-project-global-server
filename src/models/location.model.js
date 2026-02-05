@@ -2,23 +2,40 @@ import mongoose from "mongoose";
 
 const locationSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
-    baseUrl:{type:String},
-    location:{type:String},
-    subscription_amount:{type:Number},
+    externalId: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true
+    },
+
+    name: {
+      type: String,
+      required: true,
+      trim: true
+    },
+
+    location: {
+      type: String,
+      required: true,
+      trim: true
+    },
+
+    baseUrl: {
+      type: String,
+      required: true
+    },
+
+    subscription_amount: {
+      type: Number,
+      default: 300
+    },
+
     subscriptionPlans: {
-      monthly: {
-        type: Number
-      },
-      quarterly: {        // 3 months
-        type: Number
-      },
-      halfYearly: {       // 6 months
-        type: Number
-      },
-      yearly: {
-        type: Number
-      }
+      monthly: Number,
+      quarterly: Number,
+      halfYearly: Number,
+      yearly: Number
     }
   },
   { timestamps: true }

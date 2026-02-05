@@ -63,50 +63,76 @@ export default async function locationRoutes(fastify) {
     // Add location
     fastify.post("/", async (req, reply) => {
         try {
-            const { name, location, baseUrl } = req.body;
-            if(!req.body.subscription_amount){
-                req.body.subscription_amount = 300
-            }
-            if(!name) return reply.code(400).send({status:false,message:"name field required"})
-            if(!location) return reply.code(400).send({status:false,message:"location field required"})
-            if(!baseUrl) return reply.code(400).send({status:false,message:"baseUrl field required"})
+            const { externalId, name, location, baseUrl } = req.body;
 
-            const existingLocation = await Location.findOne({
-                name: { $regex: name, $options: "i" },
-                location: { $regex: location, $options: "i" },
-            });
-            if (existingLocation) {
-                return reply.code(400).send({
-                    status: false,
-                    message: `Inmate '${name}' already exists`
-                });
-            }
-            let locationdata = {}
-            const newLocation = new Location(req.body);
-            const saveLocation = await newLocation.save();
-            reply.code(201).send(saveLocation);
+            if (!externalId)
+                return reply.code(400).send({ status: false, message: "externalId required" });
+
+            if (!name || !location || !baseUrl)
+                return reply.code(400).send({ status: false, message: "Invalid payload" });
+
+            const doc = await Location.findOneAndUpdate(
+                { externalId }, // 🔑 identity
+                {
+                    $set: {
+                        name,
+                        location,
+                        baseUrl,
+                        subscription_amount: req.body.subscription_amount ?? 300,
+                        subscriptionPlans: req.body.subscriptionPlans ?? {}
+                    }
+                },
+                {
+                    upsert: true,
+                    new: true
+                }
+            );
+
+            return reply.code(200).send(doc);
+
         } catch (error) {
-            return reply(400).send({ status: false, message: `Something went wrong (${error.message})` })
+            console.error("GLOBAL LOCATION UPSERT ERROR:", error);
+            return reply.code(500).send({
+                status: false,
+                message: error.message
+            });
         }
     });
+
 
     // Update location
     fastify.put("/:id", async (req, reply) => {
         try {
-        const existingLocation = await Location.findOne({
-            _id: { $ne: req.params.id },
-            name: { $regex: req.body.name, $options: "i" },
-            location: { $regex: req.body.location, $options: "i" },
-        });
-        if(existingLocation){
-            return reply.code(400).send({status:false,message:`Already existing school name ${req.body.name} with the same location ${req.body.location}`})
-        }
-        const updated = await Location.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-        });
-        reply.send({status:true,data:updated,message:"updated successfully"});
+            const { externalId, name, location, baseUrl } = req.body;
+
+            if (!externalId)
+                return reply.code(400).send({ status: false, message: "externalId required" });
+
+            const updated = await Location.findOneAndUpdate(
+                { externalId }, // 🔑 identity
+                {
+                    $set: {
+                        ...(name && { name }),
+                        ...(location && { location }),
+                        ...(baseUrl && { baseUrl }),
+                        subscription_amount: req.body.subscription_amount
+                    }
+                },
+                { new: true, upsert: true }
+            );
+
+            return reply.code(200).send({
+                status: true,
+                message: "Global location synced",
+                data: updated
+            });
+
         } catch (error) {
-            console.log("<><>error",error)
+            console.error("GLOBAL UPDATE ERROR:", error);
+            return reply.code(500).send({
+                status: false,
+                message: error.message
+            });
         }
     });
 
